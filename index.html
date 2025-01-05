@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messenger</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="script.js" defer></script>
+</head>
+
+<body>
+    <div id="login-container">
+        <h2>Get Started</h2>
+        <input id="username" type="text" placeholder="Enter your name" >
+        <button id="login" onclick="login()">Login</button>
+    </div>
+    <div id="app-container" style="display: none;">
+        <div id="contacts-container">
+            <div id="user-profile">
+                <div class="name">User Name</div>
+            </div>
+            <input id="search-bar" type="text" placeholder="Search conversations...">
+            <div id="contacts">
+                <!-- Contact list items will be dynamically generated here -->
+            </div>
+        </div>
+        <div id="chat-container">
+            <header id="chat-header">
+                <div class="contact-info">
+                    <div id="contact-name">Contact Name</div>
+                    <div class="status">Online</div>
+                </div>
+                <div>
+                    <button class="delete-button" onclick="deleteChatHistory()">
+                        <img src="delete.png" alt="Delete">
+                    </button>
+                    <button class="logout-button" onclick="logout()">
+                        <img src="logout.png" alt="Logout">
+                    </button>
+                </div>
+            </header>
+            <div id="chat-window">
+                <div id="output">
+                    <div id="welcome-message">
+                        <h2>Welcome to Messenger App</h2>
+                        <p>Select a contact to start chatting.</p>
+                    </div>
+                </div>
+                <div id="feedback"></div>
+            </div>
+            <div id="input-area" style="display: none;">
+                <input id="message" type="text" placeholder="Type a message...">
+                <input type="file" id="media" style="display: none;" onchange="sendMedia()">
+                <button id="send" onclick="sendMessage()">
+                    <img src="send.png" alt="Send">
+                </button>
+                <button onclick="document.getElementById('media').click()">
+                    <img src="attachment.png" alt="Attachment">    
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

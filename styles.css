@@ -1,0 +1,351 @@
+body {
+    font-family: 'Roboto', Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #1e1e1e;
+    color: #ffffff;
+}
+
+img {
+    width: 25px;
+    height: 25px;
+}
+
+#app-container {
+    width: 90%;
+    height: 90vh;
+    display: flex;
+    background: #1e1e1e;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+#contacts-container {
+    width: 30%;
+    height: 100%;
+    border-right: 1px solid #3a3a3a;
+    overflow-y: auto;
+    background-color: #2c2c2c;
+    padding: 10px;
+}
+
+#contacts-container h2 {
+    margin: 0;
+    padding: 10px 0;
+    font-size: 1.5em;
+    color: #75aaff;
+    text-align: center;
+}
+
+#user-profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #3a3a3a;
+}
+
+#user-profile .name {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+#user-profile .email {
+    font-size: 0.9em;
+    color: #999;
+}
+
+#search-bar {
+    margin: 10px 0;
+    padding: 5px;
+    border-radius: 20px;
+    border: 1px solid #444;
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+    width: 100%;
+    transition: background-color 0.3s;
+}
+
+#search-bar:hover {
+    background-color: #333;
+}
+
+#contacts {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.contact {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #3a3a3a;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.contact:hover {
+    background-color: #333;
+}
+
+.contact .name {
+    font-weight: bold;
+}
+
+.contact .last-message {
+    font-size: 0.8em;
+    color: #999;
+}
+
+.contact .time {
+    font-size: 0.8em;
+    color: #999;
+    margin-left: auto;
+}
+
+.contact .new-badge {
+    background-color: #ff4d4d;
+    color: white;
+    border-radius: 10px;
+    padding: 2px 5px;
+    font-size: 0.8em;
+    margin-left: 10px;
+}
+
+#chat-container {
+    width: 70%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: #1e1e1e;
+}
+
+#chat-header {
+    background-color: #333;
+    color: white;
+    padding: 15px;
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#chat-header .contact-info {
+    display: flex;
+    align-items: center;
+}
+
+#chat-header .contact-info .status {
+    font-size: 0.8em;
+    color: #75aaff;
+}
+
+#chat-header .delete-button {
+    /* background-color: #ff4d4d; */
+    background-color: transparent;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#chat-header .delete-button:hover {
+    background-color: #ff1a1a;
+}
+
+#chat-window {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    border-bottom: 1px solid #3a3a3a;
+    background-color: #1e1e1e;
+}
+
+#output {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.message {
+    max-width: 70%;
+    padding: 10px 15px;
+    border-radius: 15px;
+    word-wrap: break-word;
+    font-size: 0.9em;
+    line-height: 1.4em;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.message.sent {
+    align-self: flex-end;
+    background-color: #007bff;
+    color: #fff;
+}
+
+.message.received {
+    align-self: flex-start;
+    background-color: #3a3a3a;
+    color: #e0e0e0;
+    border: 1px solid #444;
+}
+
+.message strong {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.message-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+
+.message-container.sent {
+    align-items: flex-end;
+}
+
+.timestamp-status {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    font-size: 0.8em;
+    color: #999;
+    margin-top: 5px;
+    gap: 1rem;
+}
+
+.timestamp {
+    font-size: 0.8em;
+    color: #999;
+}
+
+.status {
+    margin-left: 1rem;
+    font-size: 0.8em;
+    color: #999;
+}
+
+#feedback {
+    color: #999;
+    font-style: italic;
+    margin: 5px 0;
+    height: 20px;
+}
+
+#input-area {
+    display: flex;
+    gap: 5px;
+    padding: 10px;
+    border-top: 1px solid #3a3a3a;
+    background-color: #2c2c2c;
+}
+
+input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 20px;
+    border: 1px solid #444;
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+    outline: none;
+}
+
+button {
+    padding: 10px 20px;
+    border-radius: 20px;
+    border: none;
+    background-color: transparent;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #064e44;
+}
+
+#login-container {
+    height: 50%;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #121212; 
+    max-width: 400px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);  
+}
+
+#login-container h2 {
+    margin-top: 15rem;
+}
+
+#login-container input {
+    width: 94%;
+    height: 10px;
+    padding: 10px;
+    margin: 1rem 0;
+    border-radius: 5px;
+    border: 1px solid #444;
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+}
+
+#login-container button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15rem;
+    border-radius: 5px;
+    border: none;
+    background-color: #075e54;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+#login-container button:hover {
+    background-color: #064e44;
+}
+
+#recaptcha-container {
+    margin: 10px 0;
+}
+
+#welcome-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    color: #e0e0e0;
+}
+
+#welcome-message h2 {
+    font-size: 2em;
+    margin-bottom: 10px;
+}
+
+#welcome-message p {
+    font-size: 1.2em;
+    color: #999;
+}
