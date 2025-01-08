@@ -1,31 +1,32 @@
-# ChatBot
+# ChatApp
 
 ## Overview
 
-ChatBot is an intelligent conversational agent designed to simulate human-like interactions. It can be integrated into various platforms to provide automated customer support, information retrieval, and more.
+ChatApp is a modern, responsive web-based chat application that enables real-time communication between users. It features a clean, intuitive interface with support for direct messaging and customizable themes.
 
 ## Features
 
-- Natural Language Processing (NLP) for understanding user queries
-- Machine Learning algorithms for improving responses over time
-- Multi-platform support (web, mobile, etc.)
-- Customizable responses and behavior
-- Integration with external APIs
+- Real-time messaging with WebSocket technology
+- Responsive design for desktop, tablet, and mobile devices
+- Customizable themes with light and dark mode support
+- User authentication and profile management
+- Message history and persistence
+- Clean, modern user interface
 
 ## Installation
 
-To install and run the ChatBot, follow these steps:
+To install and run ChatApp, follow these steps:
 
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/yourusername/ChatBot.git
+    git clone https://github.com/yourusername/ChatApp.git
     ```
 
 2. Navigate to the project directory:
 
     ```bash
-    cd ChatBot
+    cd ChatApp
     ```
 
 3. Install the required dependencies:
@@ -34,7 +35,7 @@ To install and run the ChatBot, follow these steps:
     npm install
     ```
 
-4. Start the ChatBot:
+4. Start the application:
 
     ```bash
     npm start
@@ -42,7 +43,12 @@ To install and run the ChatBot, follow these steps:
 
 ## Usage
 
-Once the ChatBot is running, you can interact with it through the provided interface. Customize the responses and behavior by modifying the configuration files.
+After starting the application, open your web browser and navigate to `localhost:3000`. You can:
+
+- Log in with your credentials
+- View and update your profile
+- Start conversations with other users
+- Send and receive messages in real-time
 
 ## Contributing
 
@@ -54,4 +60,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Contact
 
-For any questions or suggestions, please contact us at [support@chatbot.com](mailto:support@chatbot.com).
+For any questions or suggestions, please create an issue in our GitHub repository.

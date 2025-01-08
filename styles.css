@@ -61,8 +61,8 @@ img {
 
 /* App Layout */
 #app-container {
-  width: 98%;
-  height: 95vh;
+  width: 96%;
+  height: 93vh;
   display: flex;
   overflow: hidden;
   border-radius: 1rem;
@@ -103,11 +103,12 @@ img {
   padding: 8px;
   border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.3s;
 }
 
 #user-profile .logout-button:hover {
-  background-color: var(--bg-modifier-hover);
+  /* background-color: var(--bg-modifier-hover); */
+  transform: scale(1.1);
 }
 
 /* Search Bar */
@@ -306,12 +307,21 @@ img {
   padding: 8px;
   cursor: pointer;
   border-radius: 4px;
-  transition: background-color 0.2s;
+  transition: all 0.3s ;
 }
 
 #send-button:hover,
 #attachment-button:hover {
-  background-color: var(--bg-modifier-hover);
+  /* background-color: var(--bg-modifier-hover); */
+  transform: scale(1.1);
+}
+
+/* Welcome Message */
+#welcome-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 30%;
 }
 
 /* Login Container */
