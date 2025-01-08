@@ -9,36 +9,43 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <script src="script.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
     <div id="login-container">
         <h2>Get Started</h2>
-        <input id="username" type="text" placeholder="Enter your name" >
+        <input id="username" type="text" placeholder="Enter your name" autofocus>
         <button id="login" onclick="login()">Login</button>
     </div>
+
     <div id="app-container" style="display: none;">
+        <!-- <div id="contacts-container-toggler">
+            <button id="hide-contacts-button"><img src="images/hide.png" alt=""></button>
+            <button id="show-contacts-button"><img src="images/show.png" alt=""></button>
+        </div> -->
         <div id="contacts-container">
             <div id="user-profile">
                 <div class="name">User Name</div>
+                <button class="logout-button" onclick="showLogoutConfirmation()">
+                    <img src="images/logoutW.png" alt="Logout">
+                </button>
             </div>
             <input id="search-bar" type="text" placeholder="Search conversations...">
             <div id="contacts">
                 <!-- Contact list items will be dynamically generated here -->
             </div>
         </div>
+
         <div id="chat-container">
-            <header id="chat-header">
+            <header id="chat-header" style="display: none;">
                 <div class="contact-info">
                     <div id="contact-name">Contact Name</div>
                     <div class="status">Online</div>
                 </div>
                 <div>
-                    <button class="delete-button" onclick="deleteChatHistory()">
-                        <img src="delete.png" alt="Delete">
-                    </button>
-                    <button class="logout-button" onclick="logout()">
-                        <img src="logout.png" alt="Logout">
+                    <button class="delete-button" onclick="showDeleteConfirmation()">
+                        <img src="images/deleteW.png" alt="Delete">
                     </button>
                 </div>
             </header>
@@ -52,17 +59,46 @@
                 <div id="feedback"></div>
             </div>
             <div id="input-area" style="display: none;">
-                <input id="message" type="text" placeholder="Type a message...">
-                <input type="file" id="media" style="display: none;" onchange="sendMedia()">
-                <button id="send" onclick="sendMessage()">
-                    <img src="send.png" alt="Send">
+                <button id="attachment-button" onclick="document.getElementById('media').click()">
+                    <img src="images/attachmentW.png" alt="Attachment">
                 </button>
-                <button onclick="document.getElementById('media').click()">
-                    <img src="attachment.png" alt="Attachment">    
+                <input type="file" id="media" style="display: none;" onchange="sendMedia()">
+                <input id="message" type="text" placeholder="Type a message...">
+                <button id="send-button" onclick="sendMessage()">
+                    <img src="images/sendW.png" alt="Send">
                 </button>
             </div>
         </div>
     </div>
+
+    <!-- Delete Chat History Modal -->
+    <div id="custom-alert">
+        <div class="alert-content">
+            <h2>Delete Chat</h2>
+            <p>Are you sure you want to delete the chat history?</p>
+            <button onclick="confirmDeleteChat()">Yes</button>
+            <button onclick="closeDeleteConfirmation()">No</button>
+        </div>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div id="logout-alert">
+        <div class="alert-content">
+            <h2>Logout</h2>
+            <p>Are you sure you want to logout?</p>
+            <button onclick="confirmLogout()">Yes</button>
+            <button onclick="closeLogoutConfirmation()">No</button>
+        </div>
+    </div>
+
+    <!-- Alert Modal -->
+    <div id="alert-modal" style="display: none;">
+        <div class="alert-content">
+            <p id="alert-message"></p>
+            <button id="alert-ok-button">OK</button>
+        </div>
+    </div>
+
 </body>
 
 </html>

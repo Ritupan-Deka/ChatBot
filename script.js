@@ -1,134 +1,235 @@
-// Your web app's Firebase configuration
+// Firebase Configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyApwujErcMv2TN0SDOBPf0DeZM3uVwEZDI",
-  authDomain: "messenger-fbbf9.firebaseapp.com",
-  projectId: "messenger-fbbf9",
-  databaseURL:"https://messenger-fbbf9-default-rtdb.asia-southeast1.firebasedatabase.app",
-  storageBucket: "messenger-fbbf9.firebasestorage.app",
-  messagingSenderId: "964023347209",
-  appId: "1:964023347209:web:d50f81c15d1dd2a981b0d8",
-  measurementId: "G-VSR1VWE445"
+    apiKey: "AIzaSyApwujErcMv2TN0SDOBPf0DeZM3uVwEZDI",
+    authDomain: "messenger-fbbf9.firebaseapp.com",
+    projectId: "messenger-fbbf9",
+    databaseURL: "https://messenger-fbbf9-default-rtdb.asia-southeast1.firebasedatabase.app",
+    storageBucket: "messenger-fbbf9.firebasestorage.app",
+    messagingSenderId: "964023347209",
+    appId: "1:964023347209:web:d50f81c15d1dd2a981b0d8",
+    measurementId: "G-VSR1VWE445"
 };
 
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
+// Global State
 let currentChat = null;
 let messagesRef = null;
 
+// ===== Authentication Functions =====
 function login() {
     const username = document.getElementById('username').value;
-    if (username) {
-        localStorage.setItem('username', username);
-        document.getElementById('login-container').style.display = 'none';
-        document.getElementById('app-container').style.display = 'flex';
-        document.querySelector('#user-profile .name').innerText = username;
-        loadContacts();
-        showWelcomeMessage();
-    } else {
-        alert('Please enter your name');
+    if (!username) {
+        showAlert('Please enter your name');
+        return;
     }
+
+    localStorage.setItem('username', username);
+    updateUIOnLogin(username);
+    addUserToDatabase(username);
+    loadContacts();
+    showWelcomeMessage();
+}
+
+function updateUIOnLogin(username) {
+    document.getElementById('login-container').style.display = 'none';
+    document.getElementById('app-container').style.display = 'flex';
+    document.querySelector('#user-profile .name').innerText = username;
+}
+
+function addUserToDatabase(username) {
+    const userRef = db.ref('users/' + username);
+    userRef.set({
+        name: username,
+        status: 'Online'
+    });
 }
 
 function logout() {
     localStorage.removeItem('username');
+    resetChatState();
+    showLoginContainer();
+}
+
+function resetChatState() {
+    currentChat = null;
+    if (messagesRef) {
+        messagesRef.off('child_added');
+    }
+}
+
+function showLoginContainer() {
     document.getElementById('login-container').style.display = 'flex';
     document.getElementById('app-container').style.display = 'none';
 }
 
+// ===== Contacts Management =====
 function loadContacts() {
-    const contacts = [
-        { name: 'Alice', status: 'Online' },
-        { name: 'Bob', status: 'Offline' },
-        { name: 'Charlie', status: 'Online' }
-    ];
     const contactsContainer = document.getElementById('contacts');
     contactsContainer.innerHTML = '';
-    contacts.forEach(contact => {
-        const contactElement = document.createElement('div');
-        contactElement.classList.add('contact');
-        contactElement.innerHTML = `
-            <div>
-                <div class="name">${contact.name}</div>
-            </div>
-        `;
-        contactElement.addEventListener('click', () => {
-            if (messagesRef) {
-                messagesRef.off('child_added');
+    const currentUsername = localStorage.getItem('username');
+
+    const usersRef = db.ref('users');
+    usersRef.on('value', (snapshot) => {
+        snapshot.forEach((childSnapshot) => {
+            const user = childSnapshot.val();
+            if (user.name !== currentUsername) {
+                createContactElement(user);
             }
-            currentChat = contact.name;
-            document.getElementById('contact-name').innerText = contact.name;
-            document.getElementById('input-area').style.display = 'flex';
-            loadChatHistory(currentChat);
         });
-        contactsContainer.appendChild(contactElement);
     });
+}
+
+function createContactElement(user) {
+    const contactElement = document.createElement('div');
+    contactElement.classList.add('contact');
+    contactElement.innerHTML = `
+        <div class="contact-info">
+            <div class="name">${user.name}</div>
+            <div class="status-indicator ${user.status === 'Online' ? '' : 'offline'}"></div>
+        </div>
+    `;
+
+    contactElement.addEventListener('click', () => initializeChat(user));
+    document.getElementById('contacts').appendChild(contactElement);
 }
 
 function filterContacts() {
     const searchTerm = document.getElementById('search-bar').value.toLowerCase();
     const contacts = document.querySelectorAll('.contact');
+
     contacts.forEach(contact => {
         const name = contact.querySelector('.name').innerText.toLowerCase();
-        if (name.includes(searchTerm)) {
-            contact.style.display = 'flex';
-        } else {
-            contact.style.display = 'none';
-        }
+        contact.style.display = name.includes(searchTerm) ? 'flex' : 'none';
     });
 }
 
-function formatTimestamp(timestamp) {
-    const date = new Date(timestamp);
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+// ===== Chat Functions =====
+function initializeChat(user) {
+    if (messagesRef) {
+        messagesRef.off('child_added');
+    }
+
+    currentChat = user.name;
+    updateChatHeader(user.name);
+    showChatInterface();
+    loadChatHistory(currentChat);
+}
+
+function updateChatHeader(contactName) {
+    document.getElementById('contact-name').innerText = contactName;
+}
+
+function showChatInterface() {
+    document.getElementById('input-area').style.display = 'flex';
+    document.getElementById('chat-header').style.display = 'flex';
 }
 
 function loadChatHistory(chatUser) {
     document.getElementById('output').innerHTML = '';
     const username = localStorage.getItem('username');
+
     messagesRef = db.ref('messages');
     messagesRef.on('child_added', (snapshot) => {
-        const data = snapshot.val();
-        if ((data.username === username && data.to === chatUser) || (data.username === chatUser && data.to === username)) {
-            const messageClass = data.username === username ? 'sent' : 'received';
-            const messageElement = document.createElement('div');
-            messageElement.classList.add('message-container', messageClass);
-            messageElement.innerHTML = `
-                <div class="message ${messageClass}">
-                    <div>
-                        <strong>${data.username}</strong>
-                        ${data.message}
-                    </div>
-                </div>
-                <div class="timestamp-status">
-                    <span class="timestamp">${formatTimestamp(data.timestamp)}</span>
-                    ${data.username === username ? `<span class="status">${data.status}</span>` : ''}
-                </div>
-            `;
-            document.getElementById('output').appendChild(messageElement);
-            document.getElementById('chat-window').scrollTop = document.getElementById('chat-window').scrollHeight;
+        const message = snapshot.val();
+        if (isMessageInCurrentChat(message, username, chatUser)) {
+            displayMessage(message, username);
         }
     });
 }
 
-function showWelcomeMessage() {
-    document.getElementById('output').innerHTML = `
-        <div id="welcome-message">
-            <h2>Welcome to Messenger App</h2>
-            <p>Select a contact to start chatting.</p>
-        </div>`;
-    document.getElementById('input-area').style.display = 'none';
+function isMessageInCurrentChat(message, username, chatUser) {
+    return (message.username === username && message.to === chatUser) ||
+        (message.username === chatUser && message.to === username);
 }
 
+function displayMessage(message, currentUser) {
+    const messageClass = message.username === currentUser ? 'sent' : 'received';
+    const messageElement = createMessageElement(message, messageClass);
+    document.getElementById('output').appendChild(messageElement);
+    scrollToBottom();
+}
+
+function createMessageElement(message, messageClass) {
+    const messageElement = document.createElement('div');
+    messageElement.classList.add('message-container', messageClass);
+    messageElement.innerHTML = `
+        <div class="message ${messageClass}">
+            <div>${message.message}</div>
+        </div>
+        <div class="timestamp-status">
+            <span class="timestamp">${formatTimestamp(message.timestamp)}</span>
+            ${messageClass === 'sent' ? `<span class="status">${message.status}</span>` : ''}
+        </div>
+    `;
+    return messageElement;
+}
+
+function formatTimestamp(timestamp) {
+    const date = new Date(timestamp);
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    if (date.toDateString() === today.toDateString()) {
+        return `Today at ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+    } else if (date.toDateString() === yesterday.toDateString()) {
+        return `Yesterday at ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+    } else {
+        return date.toLocaleDateString([], {
+            month: '2-digit',
+            day: '2-digit',
+            year: '2-digit'
+        }) + ' ' + date.toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+}
+
+function scrollToBottom() {
+    const chatWindow = document.getElementById('chat-window');
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+}
+
+// ===== Message Sending =====
 function sendMessage() {
     if (!currentChat) {
-        alert('Please select a contact to chat with.');
+        showAlert('Please select a contact to chat with.');
         return;
     }
+
+    const messageInput = document.getElementById('message');
+    const message = messageInput.value;
+    if (!message) return;
+
+    saveMessage(message);
+    messageInput.value = '';
+}
+
+function sendMedia() {
+    if (!currentChat) {
+        showAlert('Please select a contact to chat with.');
+        return;
+    }
+
+    const file = document.getElementById('media').files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const mediaMessage = `<img src="${e.target.result}" alt="media" style="max-width: 50vw; max-height: 50vh;">`;
+        saveMessage(mediaMessage);
+    };
+    reader.readAsDataURL(file);
+}
+
+function saveMessage(message) {
     const username = localStorage.getItem('username');
-    const message = document.getElementById('message').value;
     const timestamp = new Date().getTime();
+
     db.ref('messages').push().set({
         username: username,
         message: message,
@@ -136,83 +237,89 @@ function sendMessage() {
         status: 'sent',
         to: currentChat
     });
-    document.getElementById('message').value = '';
-    db.ref('typing').remove();
 }
 
-function sendMedia() {
-    if (!currentChat) {
-        alert('Please select a contact to chat with.');
-        return;
-    }
-    const file = document.getElementById('media').files[0];
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const username = localStorage.getItem('username');
-        const timestamp = new Date().getTime();
-        db.ref('messages').push().set({
-            username: username,
-            message: `<img src="${e.target.result}" alt="media" style="max-width: 100%;">`,
-            timestamp: timestamp,
-            status: 'sent',
-            to: currentChat
-        });
-    };
-    reader.readAsDataURL(file);
-}
-
+// ===== Chat Management =====
 function deleteChatHistory() {
     if (!currentChat) {
-        alert('Please select a contact to delete chat history.');
+        showAlert('Please select a contact to delete chat history.');
         return;
     }
+
     const username = localStorage.getItem('username');
     db.ref('messages').once('value', (snapshot) => {
         snapshot.forEach((childSnapshot) => {
-            const data = childSnapshot.val();
-            if ((data.username === username && data.to === currentChat) || (data.username === currentChat && data.to === username)) {
+            const message = childSnapshot.val();
+            if (isMessageInCurrentChat(message, username, currentChat)) {
                 childSnapshot.ref.remove();
             }
         });
     }).then(() => {
         document.getElementById('output').innerHTML = '';
         showWelcomeMessage();
-        alert('Chat history deleted.');
+        showAlert('Chat history deleted.');
     });
 }
 
-document.getElementById('search-bar').addEventListener('input', filterContacts);
+// ===== UI Helpers =====
+function showWelcomeMessage() {
+    document.getElementById('output').innerHTML = `
+        <div id="welcome-message">
+            <h2>Welcome to Messenger App</h2>
+            <p>Select a contact to start chatting.</p>
+        </div>`;
+    document.getElementById('input-area').style.display = 'none';
+    document.getElementById('chat-header').style.display = 'none';
+}
 
-// document.getElementById('message').addEventListener('keypress', () => {
-//     const username = localStorage.getItem('username');
-//     db.ref('typing').set({
-//         username: username
-//     });
-// });
+function showAlert(message) {
+    const alertModal = document.getElementById('alert-modal');
+    document.getElementById('alert-message').innerText = message;
+    alertModal.style.display = 'flex';
+}
 
-// document.getElementById('message').addEventListener('blur', () => {
-//     db.ref('typing').remove();
-// });
+// ===== Modal Management =====
+function showDeleteConfirmation() {
+    document.getElementById('custom-alert').style.display = 'flex';
+}
 
-// db.ref('typing').on('value', (snapshot) => {
-//     const data = snapshot.val();
-//     if (data) {
-//         document.getElementById('feedback').innerHTML = `<p><em>${data.username} is typing...</em></p>`;
-//     } else {
-//         document.getElementById('feedback').innerHTML = '';
-//     }
-// });
+function closeDeleteConfirmation() {
+    document.getElementById('custom-alert').style.display = 'none';
+}
 
+function confirmDeleteChat() {
+    closeDeleteConfirmation();
+    deleteChatHistory();
+}
+
+function showLogoutConfirmation() {
+    document.getElementById('logout-alert').style.display = 'flex';
+}
+
+function closeLogoutConfirmation() {
+    document.getElementById('logout-alert').style.display = 'none';
+}
+
+function confirmLogout() {
+    closeLogoutConfirmation();
+    const username = localStorage.getItem('username');
+    const userRef = db.ref('users/' + username);
+    userRef.update({ status: 'Offline' }).then(() => logout());
+}
+
+// ===== Event Listeners =====
 window.onload = () => {
     const username = localStorage.getItem('username');
     if (username) {
-        document.getElementById('login-container').style.display = 'none';
-        document.getElementById('app-container').style.display = 'flex';
-        document.querySelector('#user-profile .name').innerText = username;
+        updateUIOnLogin(username);
         loadContacts();
         showWelcomeMessage();
     } else {
-        document.getElementById('login-container').style.display = 'flex';
-        document.getElementById('app-container').style.display = 'none';
+        showLoginContainer();
     }
 };
+
+document.getElementById('search-bar').addEventListener('input', filterContacts);
+document.getElementById('alert-ok-button').addEventListener('click', () => {
+    document.getElementById('alert-modal').style.display = 'none';
+});
