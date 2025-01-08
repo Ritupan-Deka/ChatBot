@@ -1,7 +1,7 @@
 // Firebase Configuration
 const firebaseConfig = {    
-    // apiKey: "AIzaSyApwujErcMv2TN0SDOBPf0DeZM3uVwEZDI",
-    apiKey: process.env.FIREBASE_API_KEY,
+    apiKey: "AIzaSyApwujErcMv2TN0SDOBPf0DeZM3uVwEZDI",
+    // apiKey: process.env.FIREBASE_API_KEY,
     authDomain: "messenger-fbbf9.firebaseapp.com",
     projectId: "messenger-fbbf9",
     databaseURL: "https://messenger-fbbf9-default-rtdb.asia-southeast1.firebasedatabase.app",
