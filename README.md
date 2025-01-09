@@ -1,8 +1,10 @@
-# ChatApp
+# Whispr
+
+<https://ritupan-deka.github.io/Whispr/>
 
 ## Overview
 
-ChatApp is a modern, responsive web-based chat application that enables real-time communication between users. It features a clean, intuitive interface with support for direct messaging and customizable themes.
+Whispr is a modern, responsive web-based chat application that enables real-time communication between users. It features a clean, intuitive interface with support for direct messaging and customizable themes.
 
 ## Features
 
@@ -15,18 +17,18 @@ ChatApp is a modern, responsive web-based chat application that enables real-tim
 
 ## Installation
 
-To install and run ChatApp, follow these steps:
+To install and run Whispr, follow these steps:
 
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/yourusername/ChatApp.git
+    git clone https://github.com/yourusername/Whispr.git
     ```
 
 2. Navigate to the project directory:
 
     ```bash
-    cd ChatApp
+    cd Whispr
     ```
 
 3. Install the required dependencies:

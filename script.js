@@ -2,7 +2,11 @@
 const firebaseConfig = {    
     apiKey: "AIzaSyApwujErcMv2TN0SDOBPf0DeZM3uVwEZDI",
     // apiKey: process.env.FIREBASE_API_KEY,
-    authDomain: "messenger-fbbf9.firebaseapp.com",
+    authDomain: [
+        "messenger-fbbf9.firebaseapp.com",
+        "https://ritupan-deka.github.io/Whispr/",
+        "localhost"
+    ],
     projectId: "messenger-fbbf9",
     databaseURL: "https://messenger-fbbf9-default-rtdb.asia-southeast1.firebasedatabase.app",
     storageBucket: "messenger-fbbf9.firebasestorage.app",
