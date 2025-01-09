@@ -144,10 +144,25 @@ function initializeChat(user) {
     updateChatHeader(user.name);
     showChatInterface();
     loadChatHistory(currentChat);
+
+    // Auto-hide contacts on mobile after selecting a chat
+    if (window.innerWidth < 768) {
+        const contactsSection = document.querySelector('.contacts-section');
+        const chatSection = document.querySelector('.chat-section');
+        contactsSection.classList.add('hidden-mobile');
+        chatSection.classList.remove('hidden-mobile');
+    }
 }
 
 function updateChatHeader(contactName) {
-    document.getElementById('contact-name').innerText = contactName;
+    document.getElementById('chat-header').innerHTML = `
+        <button class="back-button" onclick="toggleContacts()">
+            <svg viewBox="0 0 24 24" width="24" height="24">
+                <path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+            </svg>
+        </button>
+        <span id="contact-name">${contactName}</span>
+    `;
 }
 
 function showChatInterface() {
@@ -298,6 +313,14 @@ function showWelcomeMessage() {
         </div>`;
     document.getElementById('input-area').style.display = 'none';
     document.getElementById('chat-header').style.display = 'none';
+
+    // On mobile, show contacts when no chat is selected
+    if (window.innerWidth < 768) {
+        const contactsSection = document.querySelector('.contacts-section');
+        const chatSection = document.querySelector('.chat-section');
+        contactsSection.classList.remove('hidden-mobile');
+        chatSection.classList.add('hidden-mobile');
+    }
 }
 
 function showAlert(message) {
@@ -343,7 +366,10 @@ window.onload = () => {
         cleanupInvalidUsers();
         loadContacts();
         showWelcomeMessage();
-
+        
+        // Add resize handler for responsive behavior
+        window.addEventListener('resize', handleResize);
+        
         document.addEventListener('visibilitychange', () => {
             if (document.visibilityState === 'visible') {
                 handleAppStateChange();
@@ -394,4 +420,36 @@ function cleanupInvalidUsers() {
             }
         });
     });
+}
+
+// Add these functions at the bottom of your script
+function toggleContacts() {
+    const contactsSection = document.querySelector('.contacts-section');
+    const chatSection = document.querySelector('.chat-section');
+    
+    if (contactsSection.classList.contains('hidden-mobile')) {
+        // Show contacts, hide chat
+        contactsSection.classList.remove('hidden-mobile');
+        chatSection.classList.add('hidden-mobile');
+    } else {
+        // Hide contacts, show chat
+        contactsSection.classList.add('hidden-mobile');
+        chatSection.classList.remove('hidden-mobile');
+    }
+}
+
+// Add resize handler function
+function handleResize() {
+    const contactsSection = document.querySelector('.contacts-section');
+    const chatSection = document.querySelector('.chat-section');
+    
+    if (window.innerWidth >= 768) {
+        // Remove mobile-specific classes on tablet and larger screens
+        contactsSection.classList.remove('hidden-mobile');
+        chatSection.classList.remove('hidden-mobile');
+    } else if (!currentChat) {
+        // On mobile, if no chat is selected, show contacts
+        contactsSection.classList.remove('hidden-mobile');
+        chatSection.classList.add('hidden-mobile');
+    }
 }

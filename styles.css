@@ -307,7 +307,7 @@ img {
   padding: 8px;
   cursor: pointer;
   border-radius: 4px;
-  transition: all 0.3s ;
+  transition: all 0.3s;
 }
 
 #send-button:hover,
@@ -578,3 +578,42 @@ img {
     height: 100%;
   }
 } */
+
+@media (max-width: 767px) {
+  .hidden-mobile {
+    display: none !important;
+  }
+
+  .contacts-section,
+  .chat-section {
+    width: 100% !important;
+  }
+
+  .back-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    color: inherit;
+    padding: 8px;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+
+  .back-button svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  #chat-header {
+    display: flex;
+    align-items: center;
+  }
+}
+
+@media (min-width: 768px) {
+  .back-button {
+    display: none;
+  }
+}
