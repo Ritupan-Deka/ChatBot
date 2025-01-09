@@ -141,9 +141,18 @@ function initializeChat(user) {
     }
 
     currentChat = user.name;
-    updateChatHeader(user.name);
+    updateChatHeader(user.name, user.status);
     showChatInterface();
     loadChatHistory(currentChat);
+
+    // Listen for status changes of the current chat contact
+    const userStatusRef = db.ref('users/' + user.name);
+    userStatusRef.on('value', (snapshot) => {
+        const userData = snapshot.val();
+        if (userData) {
+            updateChatHeader(userData.name, userData.status);
+        }
+    });
 
     // Auto-hide contacts on mobile after selecting a chat
     if (window.innerWidth < 768) {
@@ -154,14 +163,24 @@ function initializeChat(user) {
     }
 }
 
-function updateChatHeader(contactName) {
+function updateChatHeader(contactName, status) {
     document.getElementById('chat-header').innerHTML = `
-        <button class="back-button" onclick="toggleContacts()">
-            <svg viewBox="0 0 24 24" width="24" height="24">
-                <path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
-            </svg>
+        <div class="header-left">
+            <button class="back-button" onclick="toggleContacts()">
+                <svg viewBox="0 0 24 24" width="24" height="24">
+                    <path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                </svg>
+            </button>
+            <div class="contact-info">
+                <span id="contact-name">${contactName}</span>
+                <span class="contact-status ${status === 'Online' ? 'online' : 'offline'}">
+                    ${status || 'Offline'}
+                </span>
+            </div>
+        </div>
+        <button class="delete-button" onclick="showDeleteConfirmation()">
+            <img src="images/deleteW.png" alt="Delete">
         </button>
-        <span id="contact-name">${contactName}</span>
     `;
 }
 
@@ -366,10 +385,10 @@ window.onload = () => {
         cleanupInvalidUsers();
         loadContacts();
         showWelcomeMessage();
-        
+
         // Add resize handler for responsive behavior
         window.addEventListener('resize', handleResize);
-        
+
         document.addEventListener('visibilitychange', () => {
             if (document.visibilityState === 'visible') {
                 handleAppStateChange();
@@ -426,7 +445,7 @@ function cleanupInvalidUsers() {
 function toggleContacts() {
     const contactsSection = document.querySelector('.contacts-section');
     const chatSection = document.querySelector('.chat-section');
-    
+
     if (contactsSection.classList.contains('hidden-mobile')) {
         // Show contacts, hide chat
         contactsSection.classList.remove('hidden-mobile');
@@ -442,7 +461,7 @@ function toggleContacts() {
 function handleResize() {
     const contactsSection = document.querySelector('.contacts-section');
     const chatSection = document.querySelector('.chat-section');
-    
+
     if (window.innerWidth >= 768) {
         // Remove mobile-specific classes on tablet and larger screens
         contactsSection.classList.remove('hidden-mobile');

@@ -149,8 +149,10 @@ img {
 
 .contact .contact-info {
   display: flex;
+  flex-direction: row;
   align-items: center;
-  gap: 12px;
+  justify-content: center;
+  gap: 8px;
 }
 
 .contact .name {
@@ -179,7 +181,7 @@ img {
 }
 
 #chat-header {
-  height: 48px;
+  height: 60px;
   padding: 0 16px;
   display: flex;
   align-items: center;
@@ -192,6 +194,8 @@ img {
 #chat-header .contact-info {
   display: flex;
   align-items: center;
+  justify-content: center;
+  flex-direction: row;
   gap: 8px;
 }
 
@@ -200,7 +204,7 @@ img {
   font-weight: 600;
 }
 
-.status {
+.contact-status {
   font-size: 14px;
   color: var(--text-muted);
 }
@@ -692,5 +696,58 @@ img {
   .contacts-section,
   .chat-section {
     transform: none !important;
+  }
+}
+
+/* Add/update these styles */
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+#contact-name {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.contact-status {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}
+
+.contact-status.online {
+  color: var(--status-online);
+}
+
+.contact-status.offline {
+  color: var(--status-offline);
+}
+
+#chat-header {
+  height: 60px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--bg-primary);
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: var(--elevation-low);
+}
+
+/* Update mobile styles */
+@media screen and (max-width: 767px) {
+  .header-left {
+    flex: 1;
+  }
+
+  .contact-info {
+    flex: 1;
   }
 }
