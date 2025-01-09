@@ -1,5 +1,5 @@
 // Firebase Configuration
-const firebaseConfig = {    
+const firebaseConfig = {
     apiKey: "AIzaSyApwujErcMv2TN0SDOBPf0DeZM3uVwEZDI",
     // apiKey: process.env.FIREBASE_API_KEY,
     authDomain: [
@@ -31,11 +31,19 @@ function login() {
         return;
     }
 
-    localStorage.setItem('username', username);
-    updateUIOnLogin(username);
-    addUserToDatabase(username);
-    loadContacts();
-    showWelcomeMessage();
+    const userRef = db.ref('users/' + username);
+    userRef.set({
+        name: username,
+        status: 'Online',
+        lastSeen: firebase.database.ServerValue.TIMESTAMP
+    }).then(() => {
+        localStorage.setItem('username', username);
+        updateUIOnLogin(username);
+        loadContacts();
+        showWelcomeMessage();
+    }).catch(error => {
+        showAlert('Connection error: ' + error.message);
+    });
 }
 
 function updateUIOnLogin(username) {
@@ -76,14 +84,26 @@ function loadContacts() {
     contactsContainer.innerHTML = '';
     const currentUsername = localStorage.getItem('username');
 
-    const usersRef = db.ref('users');
-    usersRef.on('value', (snapshot) => {
-        snapshot.forEach((childSnapshot) => {
-            const user = childSnapshot.val();
-            if (user.name !== currentUsername) {
-                createContactElement(user);
-            }
-        });
+    const connectedRef = db.ref('.info/connected');
+    connectedRef.on('value', (snap) => {
+        if (snap.val() === true) {
+            const usersRef = db.ref('users');
+            usersRef.on('value', (snapshot) => {
+                contactsContainer.innerHTML = '';
+                snapshot.forEach((childSnapshot) => {
+                    const user = childSnapshot.val();
+                    if (user.name !== currentUsername) {
+                        createContactElement(user);
+                    }
+                });
+            }, (error) => {
+                console.error('Error loading contacts:', error);
+                showAlert('Error loading contacts. Please check your connection.');
+            });
+        } else {
+            console.log('Not connected to Firebase');
+            showAlert('Connection lost. Trying to reconnect...');
+        }
     });
 }
 
@@ -319,6 +339,12 @@ window.onload = () => {
         updateUIOnLogin(username);
         loadContacts();
         showWelcomeMessage();
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                handleAppStateChange();
+            }
+        });
     } else {
         showLoginContainer();
     }
@@ -327,4 +353,27 @@ window.onload = () => {
 document.getElementById('search-bar').addEventListener('input', filterContacts);
 document.getElementById('alert-ok-button').addEventListener('click', () => {
     document.getElementById('alert-modal').style.display = 'none';
+});
+
+// Add this function to handle app state changes
+function handleAppStateChange() {
+    const username = localStorage.getItem('username');
+    if (username) {
+        const userRef = db.ref('users/' + username);
+        userRef.update({
+            status: 'Online',
+            lastSeen: firebase.database.ServerValue.TIMESTAMP
+        });
+    }
+}
+
+// Add these event listeners at the bottom of your script
+window.addEventListener('online', handleAppStateChange);
+window.addEventListener('focus', handleAppStateChange);
+
+// Handle mobile browser back button and app switching
+window.addEventListener('pageshow', (event) => {
+    if (event.persisted) {
+        handleAppStateChange();
+    }
 });
