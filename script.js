@@ -92,7 +92,10 @@ function loadContacts() {
                 contactsContainer.innerHTML = '';
                 snapshot.forEach((childSnapshot) => {
                     const user = childSnapshot.val();
-                    if (user.name !== currentUsername) {
+                    if (user &&
+                        user.name &&
+                        user.name !== currentUsername &&
+                        user.name !== 'undefined') {
                         createContactElement(user);
                     }
                 });
@@ -113,7 +116,7 @@ function createContactElement(user) {
     contactElement.innerHTML = `
         <div class="contact-info">
             <div class="name">${user.name}</div>
-            <div class="status-indicator ${user.status === 'Online' ? '' : 'offline'}"></div>
+            <div class="status-indicator ${user.status && user.status === 'Online' ? '' : 'offline'}"></div>
         </div>
     `;
 
@@ -337,6 +340,7 @@ window.onload = () => {
     const username = localStorage.getItem('username');
     if (username) {
         updateUIOnLogin(username);
+        cleanupInvalidUsers();
         loadContacts();
         showWelcomeMessage();
 
@@ -377,3 +381,17 @@ window.addEventListener('pageshow', (event) => {
         handleAppStateChange();
     }
 });
+
+// Add this function to clean up invalid users
+function cleanupInvalidUsers() {
+    const usersRef = db.ref('users');
+    usersRef.once('value', (snapshot) => {
+        snapshot.forEach((childSnapshot) => {
+            const user = childSnapshot.val();
+            if (!user || !user.name || user.name === 'undefined') {
+                // Remove invalid user entry
+                childSnapshot.ref.remove();
+            }
+        });
+    });
+}
