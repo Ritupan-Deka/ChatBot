@@ -617,3 +617,80 @@ img {
     display: none;
   }
 }
+
+/* Update/add these CSS rules */
+.contacts-section {
+  width: 30%;
+  height: 100%;
+  padding: 15px;
+  background-color: var(--bg-secondary);
+  border-right: 1px solid var(--border-color);
+  overflow-y: auto;
+}
+
+.chat-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-primary);
+}
+
+/* Update mobile styles */
+@media screen and (max-width: 767px) {
+  #app-container {
+    flex-direction: column;
+    position: relative;
+    height: 100vh;
+  }
+
+  .contacts-section,
+  .chat-section {
+    width: 100% !important;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: transform 0.3s ease;
+  }
+
+  .contacts-section.hidden-mobile {
+    transform: translateX(-100%);
+  }
+
+  .chat-section.hidden-mobile {
+    transform: translateX(100%);
+  }
+
+  .back-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    padding: 8px;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+
+  .back-button svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  #chat-header {
+    display: flex;
+    align-items: center;
+  }
+}
+
+@media (min-width: 768px) {
+  .back-button {
+    display: none;
+  }
+
+  .contacts-section,
+  .chat-section {
+    transform: none !important;
+  }
+}
